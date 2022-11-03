@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.skt.Tmap.TMapMarkerItem;
 import com.skt.Tmap.TMapPoint;
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LinearLayout linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
+        RelativeLayout linearLayoutTmap = (RelativeLayout)  findViewById(R.id.linearLayoutTmap);
         TMapView tMapView = new TMapView(this);
         TMapMarkerItem markerItem1 = new TMapMarkerItem();
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         tMapView.setSKTMapApiKey("l7xxcf8d3af1899b4f168f7a593671f0c749");
         linearLayoutTmap.addView(tMapView);
+        //지도 축척 조정
         tMapView.setZoomLevel(18);
     }
 }

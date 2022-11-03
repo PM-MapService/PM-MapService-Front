@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.widget.LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayoutTmap"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutTmap"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-    </LinearLayout>
-</android.widget.LinearLayout>
+        <EditText
+            android:id="@+id/text_input"
+            android:layout_width="311dp"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/text_input"
+            android:visibility="visible"
+            android:autofillHints="검색어를 입력하시오"
+            android:inputType="text"
+            tools:ignore="LabelFor"/>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignEnd="@+id/text_input"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/search_button"
+            android:text="검색"/>
+
+    </RelativeLayout>
+
