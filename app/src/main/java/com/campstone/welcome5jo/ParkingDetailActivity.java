@@ -20,6 +20,10 @@ public class ParkingDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.parking_detail);
 
+        imageView1 = findViewById(R.id.imageView);
 
+
+        String imageStr = "https://welcome5jo-bucket.s3.ap-northeast-2.amazonaws.com/parking-area/%ED%95%98%EC%9D%B4%ED%85%8C%ED%81%AC%EC%9E%85%EA%B5%AC.png";
+        Glide.with(this).load(imageStr).into(imageView1);
     }
 }
