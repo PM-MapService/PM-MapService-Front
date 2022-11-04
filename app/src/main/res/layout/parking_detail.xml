@@ -7,42 +7,53 @@
 
     <TextView
         android:id="@+id/some_id"
-        android:layout_width="265dp"
-        android:layout_height="36dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
         android:gravity="top"
         android:lineSpacingExtra="-3sp"
-        tools:layout_editor_absoluteX="64dp"
-        tools:layout_editor_absoluteY="36dp"
-        tools:ignore="MissingConstraints" />
+        android:text="하이테크입구"
+        android:textAlignment="center"
+        android:textSize="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints,RtlCompat" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="266dp"
-        android:layout_height="293dp"
-        tools:layout_editor_absoluteX="64dp"
-        tools:layout_editor_absoluteY="140dp"
-        tools:srcCompat="@tools:sample/avatars"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="140dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="150dp"
         android:layout_height="50dp"
+        android:layout_marginTop="497dp"
         android:text="안내 시작"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="497dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="150dp"
         android:layout_height="50dp"
+        android:layout_marginTop="605dp"
         android:text="지도로 돌아가기"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="605dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

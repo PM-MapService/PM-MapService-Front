@@ -5,12 +5,16 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -37,12 +41,22 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutTmap.addView(tMapView);
         //지도 축척 조정
         tMapView.setZoomLevel(17);
+
+        //검색 버튼 클릭시 하이테크 주차구역 위치 출력
+        Button Button_add = findViewById(R.id.button);
+        Button_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ParkingDetailActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     protected TMapMarkerItem makeMarker(TMapPoint tMapPoint){
         TMapMarkerItem markerItem1 = new TMapMarkerItem();
 
-        Bitmap marker = BitmapFactory.decodeResource(getResources(), R.drawable.parking);
+        Bitmap marker = BitmapFactory.decodeResource(getResources(), R.raw.parking);
         marker = Bitmap.createScaledBitmap(marker, 150, 150, true);
         markerItem1.setIcon(marker); // 마커 아이콘 지정
         markerItem1.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
@@ -50,4 +64,6 @@ public class MainActivity extends AppCompatActivity {
         markerItem1.setName("하이테크센터"); // 마커의 타이틀 지정
         return markerItem1;
     }
+
+
 }
