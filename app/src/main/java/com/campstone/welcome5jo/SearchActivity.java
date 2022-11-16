@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity {
     protected TMapMarkerItem makeMarker(TMapPoint tMapPoint){
         TMapMarkerItem markerItem1 = new TMapMarkerItem();
 
-        Bitmap marker = BitmapFactory.decodeResource(getResources(), R.drawable.parking);
+        Bitmap marker = BitmapFactory.decodeResource(getResources(), R.raw.parking);
         marker = Bitmap.createScaledBitmap(marker, 150, 150, true);
         markerItem1.setIcon(marker); // 마커 아이콘 지정
         markerItem1.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
