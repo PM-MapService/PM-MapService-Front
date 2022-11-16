@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,10 +29,16 @@ import com.skt.Tmap.TMapView;
 
 public class MainActivity extends AppCompatActivity {
 
+    EditText editText;
+    Button button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        editText = findViewById(R.id.text_input);
+        button = findViewById(R.id.search_btn); //xml에서 생성한 id 매치
 
         LinearLayout linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
         TMapView tMapView = new TMapView(this);
@@ -54,15 +61,16 @@ public class MainActivity extends AppCompatActivity {
         //지도 축척 조정
         tMapView.setZoomLevel(17);
 
-        //검색 버튼 클릭시 하이테크 주차구역 위치 출력
-        Button Button_add = findViewById(R.id.button);
-        Button_add.setOnClickListener(new View.OnClickListener() {
+/*      button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),ParkingDetailActivity.class);
                 startActivity(intent);
             }
-        });
+        }); */
+
+        //검색 버튼 클릭
+        SettingListener();
     }
 
     protected TMapMarkerItem makeMarker(TMapPoint tMapPoint){
@@ -77,5 +85,22 @@ public class MainActivity extends AppCompatActivity {
         return markerItem1;
     }
 
+
+    private void SettingListener() {
+        //버튼에 클릭 이벤트 적용
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String input = editText.getText().toString(); //editText에 입력한 문자열을 얻어 온다.
+
+                //인텐트 선언 및 정의
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                //입력한 input값을 intent로 전달한다.
+                intent.putExtra("input_text", input);
+                //액티비티 이동
+                startActivity(intent);
+            }
+        });
+    }
 
 }
