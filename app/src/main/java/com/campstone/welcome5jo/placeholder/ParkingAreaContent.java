@@ -62,11 +62,12 @@ public class ParkingAreaContent {
         public final double lon;
         public double distance=0;
 
-        public ParkingAreaItem(int id, String name, double lat, double lon) {
+        public ParkingAreaItem(int id, String name, double lat, double lon,double curlat,double curlon) {
             this.id = id;
             this.name = name;
             this.lat = lat;
             this.lon = lon;
+            this.distance=calDistance(curlat,curlon);
         }
 
         public double calDistance(double curlat, double curlon) {
