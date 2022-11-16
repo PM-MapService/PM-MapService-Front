@@ -1,35 +1,39 @@
 package com.campstone.welcome5jo;
 
-import android.content.Context;
-import android.database.DataSetObserver;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.campstone.welcome5jo.placeholder.PlaceholderContent;
-import com.skt.Tmap.TMapCircle;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.skt.Tmap.TMapMarkerItem;
 import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 public class SearchActivity extends AppCompatActivity {
 
+    private LinearLayout linearLayoutTmap;
+    private TMapView tMapView;
 
 
     @Override
@@ -37,35 +41,25 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        LinearLayout linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
-        TMapView tMapView = new TMapView(this);
 
-        TMapMarkerItem markerItem1=makeMarker(new TMapPoint(37.45074006,126.6567586)); // 하이테크)
-        tMapView.addMarkerItem("markerItem1", markerItem1); // 지도에 마커 추가
-/*TMapMarkerItem2 markerItem2=new TMapMarkerItem2();
-        markerItem2.setTMapPoint(;makeMarker(new TMapPoint(37.45074006,126.6567586)));*/
-        tMapView.setCenterPoint(126.6471360,37.447591973);
-        tMapView.setSKTMapApiKey("l7xxcf8d3af1899b4f168f7a593671f0c749");
+        Intent intent=getIntent();
+        String value=intent.getStringExtra("input_text");
 
-        TMapCircle tcircle = new TMapCircle();
-        tcircle.setCenterPoint(new TMapPoint(37.447591973,126.6471360));
-        tcircle.setRadius(10);
-        tcircle.setAreaColor(Color.BLUE);
-        tcircle.setRadiusVisible(true);
-        tMapView.addTMapCircle(tcircle.getID(), tcircle);
 
-        linearLayoutTmap.addView(tMapView);
-        //지도 축척 조정
-        tMapView.setZoomLevel(17);
+        Bundle bundle=new Bundle();
+        bundle.putString("query",value);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment =new parkingFragment();
+        fragment.setArguments(bundle);
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.list_fgm, fragment);
+        transaction.commit();
 
-        List<PlaceholderContent.PlaceholderItem> parkingList= new ArrayList<>();
-        ListAdapter adapter = new MyItemRecyclerViewAdapter(parkingList);
+        initMap();
 
-        ListView listview = (ListView)findViewById(R.id.listview) ;
-        listview.setAdapter(adapter);
     }
 
-    protected TMapMarkerItem makeMarker(TMapPoint tMapPoint){
+    protected TMapMarkerItem makeMarker(TMapPoint tMapPoint) {
         TMapMarkerItem markerItem1 = new TMapMarkerItem();
 
         Bitmap marker = BitmapFactory.decodeResource(getResources(), R.raw.parking);
@@ -76,4 +70,13 @@ public class SearchActivity extends AppCompatActivity {
         markerItem1.setName("하이테크센터"); // 마커의 타이틀 지정
         return markerItem1;
     }
+
+    protected void initMap() {
+        linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
+        tMapView = new TMapView(this);
+        linearLayoutTmap.addView(tMapView);
+        //지도 축척 조정
+        tMapView.setZoomLevel(17);
+    }
+
 }

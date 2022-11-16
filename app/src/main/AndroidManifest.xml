@@ -30,6 +30,7 @@
                 android:value="" />
         </activity>
         <activity android:name=".ParkingDetailActivity"/>
+        <activity android:name=".SearchActivity"/>
     </application>
 
 </manifest>
