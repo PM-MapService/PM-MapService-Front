@@ -31,7 +31,8 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="1dp"
             android:background="@drawable/search_button"
-            android:text="검색" />
+            android:text="검색"
+            android:onClick="onClick"/>
     </RelativeLayout>
 
 </LinearLayout>
