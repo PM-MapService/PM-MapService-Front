@@ -1,24 +1,41 @@
 package com.campstone.welcome5jo;
 
+import android.content.Context;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.campstone.welcome5jo.placeholder.PlaceholderContent;
 import com.skt.Tmap.TMapCircle;
 import com.skt.Tmap.TMapMarkerItem;
 import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SearchActivity extends AppCompatActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_search);
 
         LinearLayout linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
         TMapView tMapView = new TMapView(this);
@@ -40,12 +57,18 @@ public class SearchActivity extends AppCompatActivity {
         linearLayoutTmap.addView(tMapView);
         //지도 축척 조정
         tMapView.setZoomLevel(17);
+
+        List<PlaceholderContent.PlaceholderItem> parkingList= new ArrayList<>();
+        ListAdapter adapter = new MyItemRecyclerViewAdapter(parkingList);
+
+        ListView listview = (ListView)findViewById(R.id.listview) ;
+        listview.setAdapter(adapter);
     }
 
     protected TMapMarkerItem makeMarker(TMapPoint tMapPoint){
         TMapMarkerItem markerItem1 = new TMapMarkerItem();
 
-        Bitmap marker = BitmapFactory.decodeResource(getResources(), R.drawable.parking);
+        Bitmap marker = BitmapFactory.decodeResource(getResources(), R.raw.parking);
         marker = Bitmap.createScaledBitmap(marker, 150, 150, true);
         markerItem1.setIcon(marker); // 마커 아이콘 지정
         markerItem1.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정

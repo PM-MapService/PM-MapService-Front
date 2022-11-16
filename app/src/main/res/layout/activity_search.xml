@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/linearLayoutTmap"
         android:layout_width="match_parent"
-        android:layout_height="462dp">
+        android:layout_height="459dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -41,7 +41,7 @@
         </RelativeLayout>
     </LinearLayout>
     <ListView
-        android:id="@+id/parking_list"
+        android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
