@@ -83,8 +83,8 @@ public class SearchActivity extends AppCompatActivity {
         initMap();
 
         for(ParkingAreaItem item:parkingAreaItems){
-            TMapMarkerItem markerItem1=makeMarker(new TMapPoint(item.lat, item.lon));
-            tMapView.addMarkerItem(item.name, markerItem1); // 지도에 마커 추가
+            TMapMarkerItem markerItem=makeMarker(new TMapPoint(item.lat, item.lon));
+            tMapView.addMarkerItem(item.name, markerItem); // 지도에 마커 추가
         }
     }
 
