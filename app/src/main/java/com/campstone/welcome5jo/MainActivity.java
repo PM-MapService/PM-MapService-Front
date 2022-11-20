@@ -1,5 +1,7 @@
 package com.campstone.welcome5jo;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -26,10 +28,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.campstone.welcome5jo.placeholder.ParkingAreaContent;
+import com.android.volley.toolbox.Volley;
+import com.campstone.welcome5jo.placeholder.ParkingAreaContent.ParkingAreaItem;
 import com.skt.Tmap.TMapCircle;
 import com.skt.Tmap.TMapGpsManager;
 import com.skt.Tmap.TMapGpsManager.onLocationChangedCallback;
@@ -39,6 +44,7 @@ import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapView;
 import com.skt.Tmap.poi_item.TMapPOIItem;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,17 +56,17 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
 
     EditText editText;
     Button button;
-
     LocationManager locationManager;
     LocationListener locationListener;
 
-    List<ParkingAreaContent.ParkingAreaItem> parkingAreaItems;
-    double curlat,curlon;
+    public List<ParkingAreaItem> parkingAreaItems;
+    double curlat=37.45074006,curlon=126.6567586;
     TextView textOri, textParse;
 
     TMapPoint tMapPoint;
     TMapView tMapView;
     String curCircldId;
+    public static RequestQueue queue;
 
     @Override
     public void onLocationChange(Location location){
@@ -82,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
         tcircle.setRadiusVisible(true);
         curCircldId=tcircle.getID();
         tMapView.addTMapCircle(curCircldId, tcircle);
-        tMapView.setCenterPoint(curlon,curlat);;
         gps.CloseGps();
     }
 
@@ -91,14 +96,13 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         editText = findViewById(R.id.text_input);
         button = findViewById(R.id.search_btn); //xml에서 생성한 id 매치
 
         LinearLayout linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
         tMapView = new TMapView(this);
 
-        TMapMarkerItem markerItem1=makeMarker(new TMapPoint(37.45074006,126.6567586)); // 하이테크)
-        tMapView.addMarkerItem("markerItem1", markerItem1); // 지도에 마커 추가
 /*TMapMarkerItem2 markerItem2=new TMapMarkerItem2();
         markerItem2.setTMapPoint(;makeMarker(new TMapPoint(37.45074006,126.6567586)));*/
         tMapView.setSKTMapApiKey("l7xxcf8d3af1899b4f168f7a593671f0c749");
@@ -118,19 +122,19 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
         //검색 버튼 클릭
         SettingListener();
 
+        queue = Volley.newRequestQueue(this);
+
         //주차 리스트 출력
-        try {
-            String url="http://3.39.158.43:8088/api/diaries/search?q=";
+            String url="http://13.124.179.76:8085/api/parking-areas";
 
             //JSON형태로 호출 및 응답 받기
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-                    url, null, new Response.Listener<JSONObject>() {
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
+                    url, null, new Response.Listener<JSONArray>() {
                 @Override
-                public void onResponse(JSONObject response) {
-
+                public void onResponse(JSONArray response) {
+                    Log.d(TAG, response.toString());
                     //응답받은 JSONObject에서 데이터 꺼내오기
                     parseData(response);
-
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -140,15 +144,9 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
                             , Toast.LENGTH_SHORT).show();
                 }
             });
+        Log.e("jsObjRequest",  "" + jsonArrayRequest);
+            queue.add(jsonArrayRequest);
 
-        }catch (Exception e){
-        }
-
-        //지도에 마커 추가
-        for(ParkingAreaContent.ParkingAreaItem item:parkingAreaItems){
-            TMapMarkerItem parkingMarker=makeparkingMarker(item);
-            tMapView.addMarkerItem(item.name, parkingMarker); // 지도에 마커 추가
-        }
 
         //마커 클릭이벤트 추가
         tMapView.setOnClickListenerCallBack(new TMapView.OnClickListenerCallback() {
@@ -164,9 +162,10 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
             }
         });
 
+        tMapView.setCenterPoint(curlon,curlat);;
     }
 
-    protected TMapMarkerItem makeparkingMarker(ParkingAreaContent.ParkingAreaItem item){
+    protected TMapMarkerItem makeparkingMarker(ParkingAreaItem item){
         TMapMarkerItem markerItem = new TMapMarkerItem();
         TMapPoint tMapPoint = new TMapPoint(item.lat, item.lon);
 
@@ -208,42 +207,27 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
         });
     }
 
-    private void parseData(JSONObject object) {
-
-        //상태값
-        String status = "";
-
-        //원본 텍스트뷰에 담기
-        textOri.setText(object.toString());
-
-        //키값 리스트
-        ArrayList<String> keyList = new ArrayList<>();
-
+    private void parseData(JSONArray jsonArray) {
+        parkingAreaItems=new ArrayList<>();
         try {
             //data 담기
-            JSONObject data = object.getJSONObject("data");
-            //status 담기
-            status = object.getString("status");
-            //data안의 전체 키값 담기
-            Iterator iterator = data.keys();
-            //반복문을 통해 list에 키값 담기
-            while(iterator.hasNext()){
-                String s = iterator.next().toString();
-                keyList.add(s);
-                //파싱 텍스트뷰에 담기
-                textParse.append("status: " + status + "\n");
-                //data안의 키값으로 데이터 꺼내오기
-                for(int i = 0; i < keyList.size(); i++){
-                    int id=data.getInt("id");
-                    double lat= data.getDouble("lat");
-                    double lon=data.getDouble("lon");
+                for(int i = 0; i < jsonArray.length(); i++){
+                    JSONObject data=(JSONObject) jsonArray.get(i);
+                    int id=data.getInt("parkingAreaId");
+                    double lat= data.getDouble("latitude");
+                    double lon=data.getDouble("longitude");
                     String name = data.getString("name");
-                    ParkingAreaContent.ParkingAreaItem parkingAreaItem= new ParkingAreaContent.ParkingAreaItem(id, name, lat, lon,curlat,curlon );
+                    ParkingAreaItem parkingAreaItem= new ParkingAreaItem(id, name, lat, lon,curlat,curlon );
+                    System.out.println(parkingAreaItem);
                     parkingAreaItems.add(parkingAreaItem);
+                    System.out.println(parkingAreaItems);
                 }
+            for(ParkingAreaItem item:parkingAreaItems){
+                TMapMarkerItem parkingMarker=makeparkingMarker(item);
+                tMapView.addMarkerItem(item.name, parkingMarker); // 지도에 마커 추가
             }
-        }catch(JSONException e){
-            e.printStackTrace();
+            } catch (JSONException ex) {
+            ex.printStackTrace();
         }
     }
 
