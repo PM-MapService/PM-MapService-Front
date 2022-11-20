@@ -33,6 +33,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.campstone.welcome5jo.placeholder.ParkingAreaContent;
+import com.google.gson.JsonObject;
 import com.skt.Tmap.TMapMarkerItem;
 import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapView;
@@ -53,6 +54,7 @@ public class SearchActivity extends AppCompatActivity{
     private ListViewAdapter adapter=null;
     protected List<ParkingAreaItem> searchedParking;
     protected double curlat,curlon;
+    double blat, blon;
     TextView textOri, textParse;
     RequestQueue queue;
 
@@ -73,13 +75,12 @@ public class SearchActivity extends AppCompatActivity{
 
         //지도 축척 조정
         tMapView.setZoomLevel(17);
-        tMapView.setCenterPoint(curlon,curlat);
         listView= (ListView) findViewById(R.id.list_fgm);
 
 
         queue=Volley.newRequestQueue(this);
             String uurl="http://13.124.179.76:8085/api/parking-areas/building?buildingName="+value;
-
+            String burl="http://13.124.179.76:8085/api/building?buildingName="+value;
             //JSON형태로 호출 및 응답 받기
 
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
@@ -99,8 +100,25 @@ public class SearchActivity extends AppCompatActivity{
                 }
             });
             Log.e("jsObjRequest",  "" + jsonArrayRequest);
-            queue.add(jsonArrayRequest);
 
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                burl, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, response.toString());
+                //응답받은 JSONObject에서 데이터 꺼내오기
+                parseData(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //오류 발생 시 실행
+                Toast.makeText(SearchActivity.this, "error: " + error.toString()
+                        , Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(jsonArrayRequest);
+        queue.add(jsonObjectRequest);
 
 
     }
@@ -153,7 +171,16 @@ public class SearchActivity extends AppCompatActivity{
         adapter=new ListViewAdapter();
         listView.setAdapter(adapter);
     }
-
+    protected void parseData(JSONObject data) {
+        try {
+            //data 담기
+                blat= data.getDouble("latitude");
+                blon=data.getDouble("longitude");
+            tMapView.setCenterPoint(blon,blat);
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+    }
     public class ListViewAdapter extends BaseAdapter{
 
         @Override
