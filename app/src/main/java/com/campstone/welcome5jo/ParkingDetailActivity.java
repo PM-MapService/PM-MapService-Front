@@ -46,13 +46,13 @@ public class ParkingDetailActivity extends AppCompatActivity {
         parkingName = findViewById(R.id.parkingName);
 
         Intent intent=getIntent();
-        String value=intent.getStringExtra("input_text");
+        int value=intent.getIntExtra("selected",0);
+        String id=Integer.toString(value);
 
         if(queue==null){
             queue= Volley.newRequestQueue(this);
         }
-        try {
-            String url="http://3.39.158.43:8088/api/diaries/search?q="+value;
+            String url="http://13.124.179.76:8085/api/parking-areas/"+id;
 
             //JSON형태로 호출 및 응답 받기
 
@@ -73,66 +73,25 @@ public class ParkingDetailActivity extends AppCompatActivity {
                             , Toast.LENGTH_SHORT).show();
                 }
             });
-
-        }catch (Exception e){
-        }
-
+            queue.add(jsonObjectRequest);
     }
 
     private void parseData(JSONObject object) {
-
-        //상태값
-        String status = "";
-
-        //원본 텍스트뷰에 담기
-        textOri.setText(object.toString());
-
-        //키값 리스트
-        ArrayList<String> keyList = new ArrayList<>();
-
-        try {
-            //data 담기
-            JSONObject data = object.getJSONObject("data");
-
-            //status 담기
-            status = object.getString("status");
-
-            //data안의 전체 키값 담기
-            Iterator iterator = data.keys();
-
-            //반복문을 통해 list에 키값 담기
-            while(iterator.hasNext()){
-
-                String s = iterator.next().toString();
-
-                keyList.add(s);
-
-                //파싱 텍스트뷰에 담기
-                textParse.append("status: " + status + "\n");
-
-                //data안의 키값으로 데이터 꺼내오기
-                for(int i = 0; i < keyList.size(); i++){
-
-                    //키값 변수에 담기
-                    String key = keyList.get(i).toString();
-
-                    //키값을 통해 데이터 꺼내오기
-                    String value = data.getString(key);
-
-                    //파싱 텍스트뷰에 담기
-                    textParse.append(key + ": " + value + "\n");
-
-
-
-                }
-                parkingName.setText(data.getString("parkingName"));
-                String imageStr=data.getString("image");
-                Glide.with(this).load(imageStr).into(parkingImage);
-            }
-
-        }catch(JSONException e){
-
+        try{
+        parkingName.setText(object.getString("name"));
+        String imageStr=object.getString("image");
+        Glide.with(this).load(imageStr).into(parkingImage);
+    }catch (JSONException e){
             e.printStackTrace();
         }
+    }
+    public void Onclick1(View v){
+
+    }
+    public void Onclick2(View v){
+        Intent intent = new Intent(ParkingDetailActivity.this,MainActivity.class);
+        //입력한 input값을 intent로 전달한다.
+        //액티비티 이동
+        startActivity(intent);
     }
 }
