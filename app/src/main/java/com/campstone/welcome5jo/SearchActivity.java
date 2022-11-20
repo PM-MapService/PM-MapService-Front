@@ -47,8 +47,8 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity{
 
-    private LinearLayout linearLayoutTmap;
-    private TMapView tMapView;
+    LinearLayout linearLayoutTmap;
+    TMapView tMapView;
     private ListView listView;
     private ListViewAdapter adapter=null;
     protected List<ParkingAreaItem> searchedParking;
@@ -62,18 +62,18 @@ public class SearchActivity extends AppCompatActivity{
         setContentView(R.layout.activity_search);
 
 
-
         Intent intent=getIntent();
         String value=intent.getStringExtra("input_text");
         curlat=intent.getDoubleExtra("curlat",0);
         curlon=intent.getDoubleExtra("curlon",0);
-        linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
+        linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmapp);
         tMapView = new TMapView(this);
         tMapView.setSKTMapApiKey("l7xxcf8d3af1899b4f168f7a593671f0c749");
         linearLayoutTmap.addView(tMapView);
+
         //지도 축척 조정
         tMapView.setZoomLevel(17);
-        tMapView.setCenterPoint(curlat,curlon);
+        tMapView.setCenterPoint(curlon,curlat);
         listView= (ListView) findViewById(R.id.list_fgm);
 
 

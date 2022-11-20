@@ -9,11 +9,10 @@
 
 
     <LinearLayout
-        android:id="@+id/linearLayoutTmap"
+        android:id="@+id/linearLayoutTmapp"
         android:layout_width="match_parent"
         android:layout_height="500dp"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:orientation="vertical"/>
     <ListView
         android:id="@+id/list_fgm"
         android:layout_width="match_parent"
