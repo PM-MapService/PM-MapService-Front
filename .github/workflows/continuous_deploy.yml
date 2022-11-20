@@ -1,0 +1,32 @@
+name: Deploy to EC2
+on:
+  push:
+    branches: [ "release" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Deploy main branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Connect ssh and git pull
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_PEM_KEY }}
+          script: |
+            echo "연결 완료"
+            cd PM-MapService/
+            git checkout release
+            git pull origin release
+            kill `ps -ef | grep pm-map-0.0.1-SNAPSHOT.jar | grep -v grep | awk '{print $2}'`
+            echo "기존 서비스 배포 중지"
+            sudo ./gradlew build
+            cd build/libs/
+            nohup java -jar pm-map-0.0.1-SNAPSHOT.jar 2>&1 &cd
+            echo "업데이트 서비스 배포 시작"
+            exit 
