@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
     LocationManager locationManager;
     LocationListener locationListener;
 
-    public List<ParkingAreaItem> parkingAreaItems;
+    List<ParkingAreaItem> parkingAreaItems;
     double curlat=37.45074006,curlon=126.6567586;
     TextView textOri, textParse;
 
@@ -201,13 +201,15 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
                 //입력한 input값을 intent로 전달한다.
                 intent.putExtra("input_text", input);
+                intent.putExtra("curlat",curlat);
+                intent.putExtra("curlon",curlon);
                 //액티비티 이동
                 startActivity(intent);
             }
         });
     }
 
-    private void parseData(JSONArray jsonArray) {
+    protected void parseData(JSONArray jsonArray) {
         parkingAreaItems=new ArrayList<>();
         try {
             //data 담기
@@ -218,9 +220,7 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
                     double lon=data.getDouble("longitude");
                     String name = data.getString("name");
                     ParkingAreaItem parkingAreaItem= new ParkingAreaItem(id, name, lat, lon,curlat,curlon );
-                    System.out.println(parkingAreaItem);
                     parkingAreaItems.add(parkingAreaItem);
-                    System.out.println(parkingAreaItems);
                 }
             for(ParkingAreaItem item:parkingAreaItems){
                 TMapMarkerItem parkingMarker=makeparkingMarker(item);
