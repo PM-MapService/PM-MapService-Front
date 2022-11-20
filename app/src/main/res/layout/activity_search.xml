@@ -12,7 +12,19 @@
         android:id="@+id/linearLayoutTmapp"
         android:layout_width="match_parent"
         android:layout_height="500dp"
-        android:orientation="vertical"/>
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@android:color/transparent"
+            android:paddingTop="5dp"
+            android:paddingLeft="5dp"
+            android:scaleType="fitCenter"
+            android:src="@raw/back"
+            android:onClick="onClick1"/>
+    </LinearLayout>
     <ListView
         android:id="@+id/list_fgm"
         android:layout_width="match_parent"
