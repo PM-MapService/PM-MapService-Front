@@ -152,14 +152,18 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
         tMapView.setOnClickListenerCallBack(new TMapView.OnClickListenerCallback() {
             @Override
             public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-                String input = arrayList.get(0).getID(); //editText에 입력한 문자열을 얻어 온다.
 
-                //인텐트 선언 및 정의
-                Intent intent = new Intent(MainActivity.this, ParkingDetailActivity.class);
-                //입력한 input값을 intent로 전달한다.
-                intent.putExtra("selected", input);
-                //액티비티 이동
-                startActivity(intent);
+                if(arrayList.size()>0){
+                    String input = arrayList.get(0).getID(); //editText에 입력한 문자열을 얻어 온다.
+
+                    //인텐트 선언 및 정의
+                    Intent intent = new Intent(MainActivity.this, ParkingDetailActivity.class);
+                    //입력한 input값을 intent로 전달한다.
+                    intent.putExtra("selected", Integer.parseInt(input));
+                    //액티비티 이동
+                    startActivity(intent);
+
+                }
 
             return false;
             }
@@ -232,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
                 }
             for(ParkingAreaItem item:parkingAreaItems){
                 TMapMarkerItem parkingMarker=makeparkingMarker(item);
-                tMapView.addMarkerItem(item.name, parkingMarker); // 지도에 마커 추가
+                tMapView.addMarkerItem(Integer.toString(item.id), parkingMarker); // 지도에 마커 추가
             }
             } catch (JSONException ex) {
             ex.printStackTrace();
