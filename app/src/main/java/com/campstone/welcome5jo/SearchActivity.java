@@ -240,7 +240,7 @@ public class SearchActivity extends AppCompatActivity{
 
 
             parkingName.setText(item.name);
-            distance.setText(Double.toString(item.distance)+"m");
+            distance.setText(Double.toString(item.distance).substring(0,6)+"m");
 
             //각 아이템 선택 event
             convertView.setOnClickListener(new View.OnClickListener() {
