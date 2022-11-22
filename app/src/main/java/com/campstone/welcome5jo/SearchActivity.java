@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.PatternMatcher;
 import android.util.Log;
@@ -38,6 +39,7 @@ import com.google.gson.JsonObject;
 import com.skt.Tmap.TMapMarkerItem;
 import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapView;
+import com.skt.Tmap.poi_item.TMapPOIItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -121,6 +123,24 @@ public class SearchActivity extends AppCompatActivity{
         queue.add(jsonArrayRequest);
         queue.add(jsonObjectRequest);
 
+        tMapView.setOnClickListenerCallBack(new TMapView.OnClickListenerCallback() {
+            @Override
+            public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+                if(arrayList.size()>0){
+                    Intent intent = new Intent(SearchActivity.this,ParkingDetailActivity.class);
+                    //입력한 input값을 intent로 전달한다.
+                    intent.putExtra("selected",Integer.parseInt(arrayList.get(0).getID()));
+                    //액티비티 이동
+                    startActivity(intent);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+                return false;
+            }
+        });
 
     }
 
@@ -164,7 +184,9 @@ public class SearchActivity extends AppCompatActivity{
             }
             for(ParkingAreaItem item:searchedParking){
                 TMapMarkerItem parkingMarker=makeparkingMarker(item);
-                tMapView.addMarkerItem(item.name, parkingMarker); // 지도에 마커 추가
+                parkingMarker.setCalloutTitle(item.name);
+                parkingMarker.setAutoCalloutVisible(true);
+                tMapView.addMarkerItem(Integer.toString(item.id), parkingMarker); // 지도에 마커 추가
             }
         } catch (JSONException ex) {
             ex.printStackTrace();
