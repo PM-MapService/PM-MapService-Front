@@ -152,12 +152,20 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
         tMapView.setOnClickListenerCallBack(new TMapView.OnClickListenerCallback() {
             @Override
             public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-                return false;
+                String input = arrayList.get(0).getID(); //editText에 입력한 문자열을 얻어 온다.
+
+                //인텐트 선언 및 정의
+                Intent intent = new Intent(MainActivity.this, ParkingDetailActivity.class);
+                //입력한 input값을 intent로 전달한다.
+                intent.putExtra("selected", input);
+                //액티비티 이동
+                startActivity(intent);
+
+            return false;
             }
+
             @Override
-            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> markerList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-                Intent intent = new Intent();
-                intent.putExtra("parkingId",markerList);
+            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
                 return false;
             }
         });
