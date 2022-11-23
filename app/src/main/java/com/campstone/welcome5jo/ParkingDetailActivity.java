@@ -86,6 +86,12 @@ public class ParkingDetailActivity extends AppCompatActivity {
         }
     }
     public void Onclick1(View v){
+        Intent intent = new Intent(ParkingDetailActivity.this,RouteActivity.class);
+        //입력한 input값을 intent로 전달한다.
+        //액티비티 이동
+        intent.putExtra("lat", (double)37.45074006);
+        intent.putExtra("lon", (double)126.6540207);
+        startActivity(intent);
 
     }
     public void Onclick2(View v){
