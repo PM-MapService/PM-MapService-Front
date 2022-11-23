@@ -6,12 +6,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,12 +17,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.campstone.welcome5jo.placeholder.ParkingAreaContent;
+import com.android.volley.toolbox.Volley;
+import com.campstone.welcome5jo.placeholder.PassPoint;
 import com.skt.Tmap.TMapCircle;
-import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapGpsManager;
 import com.skt.Tmap.TMapGpsManager.onLocationChangedCallback;
 import com.skt.Tmap.TMapMarkerItem;
@@ -33,11 +32,11 @@ import com.skt.Tmap.TMapPolyLine;
 import com.skt.Tmap.TMapView;
 import com.skt.Tmap.poi_item.TMapPOIItem;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class RouteActivity extends AppCompatActivity implements onLocationChangedCallback {
@@ -50,6 +49,10 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
 
     TMapView tMapView;
     String curCircldId;
+    RequestQueue queue;
+
+    List<PassPoint> passPoints;
+    List<PassPoint> points;
 
     @Override
     public void onLocationChange(Location location){
@@ -92,11 +95,52 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         linearLayoutTmap.addView(tMapView);
         //지도 축척 조정
         tMapView.setZoomLevel(17);
+        Intent intent=getIntent();
+        double lat=intent.getDoubleExtra("lat",0);
+        double lon=intent.getDoubleExtra("lon",0);
+        //textView.setText("도착지");
+
+        //String id=Integer.toString(value);
+
+        if(queue==null){
+            queue= Volley.newRequestQueue(this);
+        }
+        String url="http://13.124.179.76:8085/api/route?startLng=126.65523677318794&startLat=37.4474289218818&endId=2";
+
+        //JSON형태로 호출 및 응답 받기
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+                url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                //응답받은 JSONObject에서 데이터 꺼내오기
+                try {
+                    parseData(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //오류 발생 시 실행
+                Toast.makeText(RouteActivity.this, "error: " + error.toString()
+                        , Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(jsonObjectRequest);
 
 
+/*        TMapPoint tMapPointEnd = new TMapPoint(lat,lon);
+        TMapData tMapData = new TMapData();*/
         //경로?
 /*        try {
-            TMapPolyLine tMapPolyLine = new TMapData().findPathData(tMapPointStart, tMapPointEnd);
+            TMapPolyLine tMapPolyLine = new TMapPolyLine();
+            //tMapPolyLine.addLinePoint(tMapPointStart);
+            //tMapPolyLine.addLinePoint(tMapPointEnd);
+            tMapPolyLine = tMapData.findPathData(tMapPointStart, tMapPointEnd);
             tMapPolyLine.setLineColor(Color.BLUE);
             tMapPolyLine.setLineWidth(2);
             tMapView.addTMapPolyLine("Line1", tMapPolyLine);
@@ -112,44 +156,35 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
             }
         }); */
 
-        //주차 리스트 출력
-        try {
-            String url="http://3.39.158.43:8088/api/diaries/search?q=";
-
-            //JSON형태로 호출 및 응답 받기
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-                    url, null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    //응답받은 JSONObject에서 데이터 꺼내오기
-                    parseData(response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    //오류 발생 시 실행
-                    Toast.makeText(RouteActivity.this, "error: " + error.toString()
-                            , Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        }catch (Exception e){
-        }
 
 
+        tMapView.setCenterPoint(lon,lat);
+        tMapView.setOnClickListenerCallBack(new TMapView.OnClickListenerCallback() {
+            @Override
+            public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+                final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.turn_right);
+                mp.start();
+                return false;
+            }
+
+            @Override
+            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+                return false;
+            }
+        });
 
     }
 
-    protected TMapMarkerItem makeparkingMarker(ParkingAreaContent.ParkingAreaItem item){
+    protected TMapMarkerItem makePointMarker(PassPoint item){
         TMapMarkerItem markerItem = new TMapMarkerItem();
         TMapPoint tMapPoint = new TMapPoint(item.lat, item.lon);
 
-        Bitmap marker = BitmapFactory.decodeResource(getResources(), R.raw.parking);
-        marker = Bitmap.createScaledBitmap(marker, 150, 150, true);
+        Bitmap marker = BitmapFactory.decodeResource(getResources(), R.raw.placeholder);
+        marker = Bitmap.createScaledBitmap(marker, 100, 100, true);
         markerItem.setIcon(marker); // 마커 아이콘 지정
         markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
         markerItem.setTMapPoint(tMapPoint); // 마커의 좌표 지정
-        markerItem.setName(item.name); // 마커의 타이틀 지정
+        markerItem.setName(item.type); // 마커의 타이틀 지정
         return markerItem;
     }
 
@@ -165,39 +200,62 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         return markerItem1;
     }
 
+    protected void parseData(JSONObject jsonObject) throws JSONException {
+        passPoints = new ArrayList<>();
+        points = new ArrayList<>();
 
-    private void parseData(JSONObject object) {
+        JSONArray features=jsonObject.getJSONArray("features");
+        int scnt=1,lcnt=1;
+        for(int i = 0; i < features.length(); i++){
+            JSONObject data=(JSONObject) features.get(i);
+            JSONObject geometry=data.getJSONObject("geometry");
+            JSONObject properties=data.getJSONObject("properties");
 
-        //상태값
-        String status = "";
-
-        //원본 텍스트뷰에 담기
-        textOri.setText(object.toString());
-
-        //키값 리스트
-        ArrayList<String> keyList = new ArrayList<>();
-
-        try {
-            //data 담기
-            JSONObject data = object.getJSONObject("data");
-            //status 담기
-            status = object.getString("status");
-            //data안의 전체 키값 담기
-            Iterator iterator = data.keys();
-            //반복문을 통해 list에 키값 담기
-            while(iterator.hasNext()){
-                String s = iterator.next().toString();
-                keyList.add(s);
-                //파싱 텍스트뷰에 담기
-                textParse.append("status: " + status + "\n");
-                //data안의 키값으로 데이터 꺼내오기
-                for(int i = 0; i < keyList.size(); i++){
-
-                }
+            if(geometry.getString("type").equals("Point")){
+                JSONArray coord= (JSONArray) geometry.get("coordinates");
+                PassPoint passPoint = new PassPoint(coord.getDouble(1), coord.getDouble(0),"points",scnt);
+                passPoint.setDescription(properties.getString("description"));
+                points.add(passPoint);
+                scnt++;
             }
-        }catch(JSONException e){
-            e.printStackTrace();
+            else{
+                JSONArray coord= (JSONArray) geometry.get("coordinates");
+                for(int j=0;j<coord.length();j++){
+                    PassPoint passPoint = new PassPoint(coord.getJSONArray(j).getDouble(1), coord.getJSONArray(j).getDouble(0),"line",lcnt);
+                    passPoint.setDescription(properties.getString("description"));
+                    passPoints.add(passPoint);
+                    lcnt++;
+                }
+
+            }
+
         }
+
+        TMapPolyLine tMapPolyLine = new TMapPolyLine();
+        tMapPolyLine.setLineColor(Color.BLUE);
+        tMapPolyLine.setLineWidth(2);
+        for(int i=0;i<passPoints.size();i++){
+            tMapPolyLine.addLinePoint(new TMapPoint(passPoints.get(i).lat,passPoints.get(i).lon));
+        }
+        tMapView.addTMapPolyLine("Line1", tMapPolyLine);
+
+        for(PassPoint point:points){
+            TMapMarkerItem parkingMarker=makePointMarker(point);
+            parkingMarker.setCalloutTitle(point.description);
+            parkingMarker.setAutoCalloutVisible(true);
+            tMapView.addMarkerItem(Integer.toString(point.id), parkingMarker); // 지도에 마커 추가
+        }
+    }
+
+    public void onClick1(View v){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
+    public View.OnClickListener onclickvoice(){
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.turn_right);
+        mp.start();
+        return null;
     }
 
 
