@@ -9,7 +9,6 @@
         android:layout_width="63dp"
         android:layout_height="60dp"
         android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem"
         android:src="@raw/placeholder"
         />
 
@@ -18,7 +17,6 @@
         android:layout_width="180dp"
         android:layout_height="60dp"
         android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem"
         android:text="dffjsakfjsfl"
         android:gravity="center_vertical"
         />
@@ -28,6 +26,5 @@
         android:layout_height="60dp"
         android:layout_margin="@dimen/text_margin"
         android:gravity="center"
-        android:text=" ? m"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:text="@string/m"/>
 </LinearLayout>
