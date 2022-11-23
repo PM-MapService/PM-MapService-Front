@@ -31,6 +31,7 @@
         </activity>
         <activity android:name=".ParkingDetailActivity"/>
         <activity android:name=".SearchActivity"/>
+        <activity android:name=".RouteActivity"/>
     </application>
 
 </manifest>
