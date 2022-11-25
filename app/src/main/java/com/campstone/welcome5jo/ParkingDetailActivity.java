@@ -35,7 +35,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
 
     TextView textOri, textParse;
     RequestQueue queue;
-
+    String id="0";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
 
         Intent intent=getIntent();
         int value=intent.getIntExtra("selected",0);
-        String id=Integer.toString(value);
+        id=Integer.toString(value);
 
         if(queue==null){
             queue= Volley.newRequestQueue(this);
@@ -89,8 +89,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(ParkingDetailActivity.this,RouteActivity.class);
         //입력한 input값을 intent로 전달한다.
         //액티비티 이동
-        intent.putExtra("lat", (double)37.45074006);
-        intent.putExtra("lon", (double)126.6540207);
+        intent.putExtra("pid",id);
         startActivity(intent);
 
     }
