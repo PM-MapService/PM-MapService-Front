@@ -2,6 +2,7 @@ package com.campstone.welcome5jo;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -67,14 +68,14 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
     TMapView tMapView;
     String curCircldId;
     public static RequestQueue queue;
+    TMapGpsManager gps;
+    int nCurrentPermission = 0;
+    static final int PERMISSIONS_REQUEST = 0x0000001;
 
     @Override
     public void onLocationChange(Location location){
-        TMapGpsManager gps=new TMapGpsManager(this);
-        gps.setMinTime(1000);
-        gps.setMinDistance(5);
-        gps.setProvider(gps.GPS_PROVIDER);
-        gps.OpenGps();
+
+
 
         TMapPoint point=gps.getLocation();
         curlat=point.getLatitude();
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
         tcircle.setRadiusVisible(true);
         curCircldId=tcircle.getID();
         tMapView.addTMapCircle(curCircldId, tcircle);
-        gps.CloseGps();
     }
 
     @Override
@@ -175,6 +175,13 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
         });
 
         tMapView.setCenterPoint(curlon,curlat);;
+        OnCheckPermission();
+
+        gps=new TMapGpsManager(this);
+        gps.setMinTime(1000);
+        gps.setMinDistance(5);
+        gps.setProvider(gps.GPS_PROVIDER);
+        gps.OpenGps();
     }
 
     protected TMapMarkerItem makeparkingMarker(ParkingAreaItem item){
@@ -242,6 +249,57 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
             ex.printStackTrace();
         }
     }
+    public void OnCheckPermission() {
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                Toast.makeText(this, "앱 실행을 위해서는 권한을 설정해야 합니다", Toast.LENGTH_LONG).show();
+
+                ActivityCompat.requestPermissions(this,
+
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+
+                        PERMISSIONS_REQUEST);
+
+            } else {
+
+                ActivityCompat.requestPermissions(this,
+
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+
+                        PERMISSIONS_REQUEST);
+
+            }
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode) {
+
+            case PERMISSIONS_REQUEST :
+
+                if (grantResults.length > 0
+
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(this, "앱 실행을 위한 권한이 설정 되었습니다", Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    Toast.makeText(this, "앱 실행을 위한 권한이 취소 되었습니다", Toast.LENGTH_LONG).show();
+
+                }
+
+                break;
+
+        }
+    }
 
 }
