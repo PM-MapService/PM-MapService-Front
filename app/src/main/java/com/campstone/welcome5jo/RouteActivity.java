@@ -116,7 +116,11 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
                     final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.immediate);
                     mp.start();
                 }
-                calpoints.remove(cpoint);
+                else if(cpoint.getTurntype()==200){
+                    final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.start);
+                    mp.start();
+                }
+                cpoint.setTurntype(0);
             }
         }
 
@@ -144,8 +148,8 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
 
         gps=new TMapGpsManager(this);
         gps.setProvider(gps.GPS_PROVIDER);
-        gps.setMinTime(1000);
-        gps.setMinDistance(5);
+        gps.setMinTime(100);
+        gps.setMinDistance(1);
         gps.OpenGps();
         Toast.makeText(RouteActivity.this, "좌표값을 받아오는 중입니다"
                 , Toast.LENGTH_SHORT).show();
@@ -204,8 +208,6 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         }catch(Exception e) {
             e.printStackTrace();
         }*/
-
-        tMapView.setCenterPoint(curlon,curlat);
 
         tMapView.setOnLongClickListenerCallback(new TMapView.OnLongClickListenerCallback() {
             @Override
