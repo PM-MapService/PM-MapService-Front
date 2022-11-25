@@ -1,6 +1,8 @@
 package com.campstone.welcome5jo;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -50,18 +53,20 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
     TMapView tMapView;
     String curCircldId;
     RequestQueue queue;
+    public String pid;
 
     List<PassPoint> passPoints;
     List<PassPoint> points;
+    List<PassPoint> calpoints;
+    TMapGpsManager gps;
+    boolean flag=false;
+    boolean con=true;
+    int p=0;
+    int nCurrentPermission = 0;
+    static final int PERMISSIONS_REQUEST = 0x0000001;
 
     @Override
     public void onLocationChange(Location location){
-        TMapGpsManager gps=new TMapGpsManager(this);
-        gps.setMinTime(1000);
-        gps.setMinDistance(5);
-        gps.setProvider(gps.GPS_PROVIDER);
-        gps.OpenGps();
-
         TMapPoint point=gps.getLocation();
         curlat=point.getLatitude();
         curlon=point.getLongitude();
@@ -69,17 +74,53 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
 
         TMapCircle tcircle = new TMapCircle();
         tcircle.setCenterPoint(point);
-        tcircle.setRadius(10);
+        tcircle.setRadius(5);
         tcircle.setAreaColor(Color.BLUE);
         tcircle.setRadiusVisible(true);
         curCircldId=tcircle.getID();
         tMapView.addTMapCircle(curCircldId, tcircle);
-        tMapView.setCenterPoint(curlon,curlat);;
-        gps.CloseGps();
+        tMapView.setCenterPoint(curlon,curlat);
+
+        if(con) {
+        init();
+        con=false;
+        }
+        if(flag){
+            navigate(curlat,curlon);
+        }
 
 
     }
+    protected void navigate(double lat, double lon){
+        for(PassPoint cpoint:calpoints){
+            double theta = cpoint.lon - lon;
+            double dist = Math.sin(deg2rad(cpoint.lat)) * Math.sin(deg2rad(lat)) + Math.cos(deg2rad(cpoint.lat)) * Math.cos(deg2rad(lat)) * Math.cos(deg2rad(theta));
+            dist = Math.acos(dist);
+            dist = rad2deg(dist);
+            dist = dist * 60 * 1.1515;
+            dist = dist * 1609.344; //미터단위
+            if(dist<8){
+                if(cpoint.getTurntype()==11){
+                    final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.straight);
+                    mp.start();
+                }
+                else if(cpoint.getTurntype()==12){
+                    final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.turn_left);
+                    mp.start();
+                }
+                else if(cpoint.getTurntype()==13){
+                    final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.turn_right);
+                    mp.start();
+                }
+                else if(cpoint.getTurntype()==201){
+                    final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.immediate);
+                    mp.start();
+                }
+                calpoints.remove(cpoint);
+            }
+        }
 
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,18 +136,32 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
 
         linearLayoutTmap.addView(tMapView);
         //지도 축척 조정
-        tMapView.setZoomLevel(17);
+        tMapView.setZoomLevel(16);
         Intent intent=getIntent();
-        double lat=intent.getDoubleExtra("lat",0);
-        double lon=intent.getDoubleExtra("lon",0);
-        //textView.setText("도착지");
+        pid=intent.getStringExtra("pid");
+        String pname= intent.getStringExtra("pname");
+        textView.setText(pname);
 
-        //String id=Integer.toString(value);
+        gps=new TMapGpsManager(this);
+        gps.setProvider(gps.GPS_PROVIDER);
+        gps.setMinTime(1000);
+        gps.setMinDistance(5);
+        gps.OpenGps();
+        Toast.makeText(RouteActivity.this, "좌표값을 받아오는 중입니다"
+                , Toast.LENGTH_SHORT).show();
 
+
+
+
+
+    }
+
+    protected void init(){
         if(queue==null){
             queue= Volley.newRequestQueue(this);
         }
-        String url="http://13.124.179.76:8085/api/route?startLng=126.65523677318794&startLat=37.4474289218818&endId=2";
+
+        String url="http://13.124.179.76:8085/api/route?startLng="+Double.toString(curlon)+"&startLat="+Double.toString(curlat)+"&endId="+pid;
 
         //JSON형태로 호출 및 응답 받기
 
@@ -149,33 +204,18 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         }catch(Exception e) {
             e.printStackTrace();
         }*/
-/*      button.setOnClickListener(new View.OnClickListener() {
+
+        tMapView.setCenterPoint(curlon,curlat);
+
+        tMapView.setOnLongClickListenerCallback(new TMapView.OnLongClickListenerCallback() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),ParkingDetailActivity.class);
-                startActivity(intent);
-            }
-        }); */
-
-
-
-        tMapView.setCenterPoint(lon,lat);
-        tMapView.setOnClickListenerCallBack(new TMapView.OnClickListenerCallback() {
-            @Override
-            public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-                final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.turn_right);
-                mp.start();
-                return false;
-            }
-
-            @Override
-            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-                return false;
+            public void onLongPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint) {
+                tMapView.setZoomLevel(20);
+                calpoints=points;
+                flag=true;
             }
         });
-
     }
-
     protected TMapMarkerItem makePointMarker(PassPoint item){
         TMapMarkerItem markerItem = new TMapMarkerItem();
         TMapPoint tMapPoint = new TMapPoint(item.lat, item.lon);
@@ -215,6 +255,7 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
             if(geometry.getString("type").equals("Point")){
                 JSONArray coord= (JSONArray) geometry.get("coordinates");
                 PassPoint passPoint = new PassPoint(coord.getDouble(1), coord.getDouble(0),"points",scnt);
+                passPoint.setTurntype(properties.getInt("turnType"));
                 passPoint.setDescription(properties.getString("description"));
                 points.add(passPoint);
                 scnt++;
@@ -246,6 +287,9 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
             parkingMarker.setAutoCalloutVisible(true);
             tMapView.addMarkerItem(Integer.toString(point.id), parkingMarker); // 지도에 마커 추가
         }
+
+        Toast.makeText(RouteActivity.this,"화면을 길게 누르면 안내가 시작됩니다"
+                , Toast.LENGTH_SHORT).show();
     }
 
     public void onClick1(View v){
@@ -253,11 +297,38 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         startActivity(intent);
 
     }
-    public View.OnClickListener onclickvoice(){
-        final MediaPlayer mp = MediaPlayer.create(this, R.raw.turn_right);
-        mp.start();
-        return null;
+
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
     }
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
+    public void OnCheckPermission() {
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
 
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                Toast.makeText(this, "앱 실행을 위해서는 권한을 설정해야 합니다", Toast.LENGTH_LONG).show();
+
+                ActivityCompat.requestPermissions(this,
+
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+
+                        PERMISSIONS_REQUEST);
+
+            } else {
+
+                ActivityCompat.requestPermissions(this,
+
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+
+                        PERMISSIONS_REQUEST);
+
+            }
+        }
+    }
 }

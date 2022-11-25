@@ -36,6 +36,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
     TextView textOri, textParse;
     RequestQueue queue;
     String id="0";
+    String pname;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
     private void parseData(JSONObject object) {
         try{
         parkingName.setText(object.getString("name"));
+        pname=object.getString("name");
         String imageStr=object.getString("image");
         Glide.with(this).load(imageStr).into(parkingImage);
     }catch (JSONException e){
@@ -90,6 +92,7 @@ public class ParkingDetailActivity extends AppCompatActivity {
         //입력한 input값을 intent로 전달한다.
         //액티비티 이동
         intent.putExtra("pid",id);
+        intent.putExtra("pname",pname);
         startActivity(intent);
 
     }
