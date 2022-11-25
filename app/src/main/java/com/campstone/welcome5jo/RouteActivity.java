@@ -77,6 +77,7 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         tMapView.setCenterPoint(curlon,curlat);;
         gps.CloseGps();
 
+
     }
 
 
