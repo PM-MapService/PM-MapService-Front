@@ -8,6 +8,16 @@ public class PassPoint {
     public double lon;
     public String type;
     public String description=null;
+
+    public int getTurntype() {
+        return turntype;
+    }
+
+    public void setTurntype(int turntype) {
+        this.turntype = turntype;
+    }
+
+    public int turntype;
     public int seq;
 
     public String getDescription() {
