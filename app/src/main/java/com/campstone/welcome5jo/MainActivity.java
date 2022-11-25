@@ -278,28 +278,4 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        switch (requestCode) {
-
-            case PERMISSIONS_REQUEST :
-
-                if (grantResults.length > 0
-
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    Toast.makeText(this, "앱 실행을 위한 권한이 설정 되었습니다", Toast.LENGTH_LONG).show();
-
-                } else {
-
-                    Toast.makeText(this, "앱 실행을 위한 권한이 취소 되었습니다", Toast.LENGTH_LONG).show();
-
-                }
-
-                break;
-
-        }
-    }
-
 }
