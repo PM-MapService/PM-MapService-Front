@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
     <LinearLayout
         android:id="@+id/linearLayoutTmap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-    </LinearLayout>
+        android:orientation="vertical"></LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -41,6 +42,18 @@
             android:background="@drawable/search_button"
             android:text="검색"
             android:onClick="onClick"/>
+
     </RelativeLayout>
+    <ImageButton
+        android:id="@+id/cur_btn"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@raw/gps"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        />
 </RelativeLayout>
 

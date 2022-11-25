@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -75,8 +76,6 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
     @Override
     public void onLocationChange(Location location){
 
-
-
         TMapPoint point=gps.getLocation();
         curlat=point.getLatitude();
         curlon=point.getLongitude();
@@ -99,6 +98,13 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
 
         editText = findViewById(R.id.text_input);
         button = findViewById(R.id.search_btn); //xml에서 생성한 id 매치
+        ImageButton button1=findViewById(R.id.cur_btn);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tMapView.setCenterPoint(curlon,curlat);
+            }
+        });
 
         LinearLayout linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
         tMapView = new TMapView(this);
@@ -153,6 +159,11 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
             @Override
             public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
 
+            return false;
+            }
+
+            @Override
+            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
                 if(arrayList.size()>0){
                     String input = arrayList.get(0).getID(); //editText에 입력한 문자열을 얻어 온다.
 
@@ -164,12 +175,6 @@ public class MainActivity extends AppCompatActivity implements onLocationChanged
                     startActivity(intent);
 
                 }
-
-            return false;
-            }
-
-            @Override
-            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
                 return false;
             }
         });
