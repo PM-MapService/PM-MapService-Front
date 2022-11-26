@@ -83,7 +83,7 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         curCircldId=tcircle.getID();
         tMapView.addTMapCircle(curCircldId, tcircle);
         tMapView.setCenterPoint(curlon,curlat);
-
+        //tMapView.setCenterPoint(126.65304834232677,37.44962999149071);
         if(con) {
         init();
         con=false;
@@ -166,7 +166,7 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         }
 
         String url="http://13.124.179.76:8085/api/route?startLng="+Double.toString(curlon)+"&startLat="+Double.toString(curlat)+"&endId="+pid;
-
+        //String url="http://13.124.179.76:8085/api/route?startLng=126.65304834232677&startLat=37.44962999149071&endId=1";
         //JSON형태로 호출 및 응답 받기
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
@@ -252,9 +252,9 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         for(int i = 0; i < features.length(); i++){
             JSONObject data=(JSONObject) features.get(i);
             JSONObject geometry=data.getJSONObject("geometry");
-            JSONObject properties=data.getJSONObject("properties");
 
             if(geometry.getString("type").equals("Point")){
+                JSONObject properties=data.getJSONObject("properties");
                 JSONArray coord= (JSONArray) geometry.get("coordinates");
                 PassPoint passPoint = new PassPoint(coord.getDouble(1), coord.getDouble(0),"points",scnt);
                 passPoint.setTurntype(properties.getInt("turnType"));
@@ -270,7 +270,7 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
                 JSONArray coord= (JSONArray) geometry.get("coordinates");
                 for(int j=0;j<coord.length();j++){
                     PassPoint passPoint = new PassPoint(coord.getJSONArray(j).getDouble(1), coord.getJSONArray(j).getDouble(0),"line",lcnt);
-                    passPoint.setDescription(properties.getString("description"));
+                    //passPoint.setDescription(properties.getString("description"));
                     passPoints.add(passPoint);
                     lcnt++;
                 }
