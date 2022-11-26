@@ -14,6 +14,36 @@ tools:context=".RouteActivity">
     android:layout_height="match_parent"
     android:orientation="vertical">
 </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="337dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/text_input"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/destination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-5dp"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:text="도착지"
+            android:textColor="@color/purple_700"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/money"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/destination"
+            android:gravity="center_horizontal"
+            android:paddingBottom="5dp"
+            android:text="가나다"
+            android:textSize="15dp" />
+    </RelativeLayout>
 <Button
     android:id="@+id/fin_btn"
     android:layout_width="150dp"
@@ -23,16 +53,8 @@ tools:context=".RouteActivity">
     android:background="@drawable/search_button"
     android:text="안내 종료"
     android:onClick="onClick1"
+    android:layout_marginBottom="10dp"
     />
-    <TextView
-        android:id="@+id/destination"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:text="도착지"
-        android:textColor="@android:color/holo_blue_dark"
-        />
+
 
 </RelativeLayout>
