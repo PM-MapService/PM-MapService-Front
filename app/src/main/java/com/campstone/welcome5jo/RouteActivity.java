@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -45,6 +46,7 @@ import java.util.List;
 public class RouteActivity extends AppCompatActivity implements onLocationChangedCallback {
 
     TextView textView;
+    TextView textViewMoney;
     Button button;
 
     double curlat,curlon;
@@ -64,6 +66,7 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
     int p=0;
     int nCurrentPermission = 0;
     static final int PERMISSIONS_REQUEST = 0x0000001;
+    int totalLength;
 
     @Override
     public void onLocationChange(Location location){
@@ -131,8 +134,10 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
+
         button = findViewById(R.id.fin_btn); //xml에서 생성한 id 매치
         textView=findViewById(R.id.destination);
+        textViewMoney=findViewById(R.id.money);
         LinearLayout linearLayoutTmap = (LinearLayout) findViewById(R.id.linearLayoutTmap);
         tMapView = new TMapView(this);
 
@@ -153,11 +158,6 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         gps.OpenGps();
         Toast.makeText(RouteActivity.this, "좌표값을 받아오는 중입니다"
                 , Toast.LENGTH_SHORT).show();
-
-
-
-
-
     }
 
     protected void init(){
@@ -260,6 +260,10 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
                 passPoint.setTurntype(properties.getInt("turnType"));
                 passPoint.setDescription(properties.getString("description"));
                 points.add(passPoint);
+                if(scnt==1){
+                    totalLength=properties.getInt("totalTime");
+                    textViewMoney.setText(setTimeMessage(totalLength));
+                }
                 scnt++;
             }
             else{
@@ -299,7 +303,10 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
         startActivity(intent);
 
     }
-
+    private String setTimeMessage(int meter){
+        int time=meter/300+1;
+        return "약"+Integer.toString(time)+"분 소요, 예상운임: "+Integer.toString(time*160+600)+"원";
+    }
     private static double deg2rad(double deg) {
         return (deg * Math.PI / 180.0);
     }
