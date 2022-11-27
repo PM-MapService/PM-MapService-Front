@@ -82,7 +82,8 @@ public class ParkingDetailActivity extends AppCompatActivity {
         parkingName.setText(object.getString("name"));
         pname=object.getString("name");
         String imageStr=object.getString("image");
-        Glide.with(this).load(imageStr).into(parkingImage);
+        Glide.with(this).load(imageStr).placeholder(R.raw.loading).into(parkingImage);
+
     }catch (JSONException e){
             e.printStackTrace();
         }

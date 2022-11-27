@@ -17,7 +17,7 @@
     <LinearLayout
         android:id="@+id/linearLayoutTmapp"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="600dp"
         android:layout_above="@+id/list_fgm"
         android:layout_marginBottom="0dp"
         android:orientation="vertical">

@@ -102,7 +102,7 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
             dist = rad2deg(dist);
             dist = dist * 60 * 1.1515;
             dist = dist * 1609.344; //미터단위
-            if(dist<8){
+            if(dist<20){
                 if(cpoint.getTurntype()==11){
                     final MediaPlayer mp = MediaPlayer.create(RouteActivity.this, R.raw.straight);
                     mp.start();
@@ -261,7 +261,7 @@ public class RouteActivity extends AppCompatActivity implements onLocationChange
                 passPoint.setDescription(properties.getString("description"));
                 points.add(passPoint);
                 if(scnt==1){
-                    totalLength=properties.getInt("totalTime");
+                    totalLength=properties.getInt("totalDistance");
                     textViewMoney.setText(setTimeMessage(totalLength));
                 }
                 scnt++;
